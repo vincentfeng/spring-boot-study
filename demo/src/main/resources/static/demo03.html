@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Hello, Bootstrap Table!</title>
+
+<link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+  </head>
+  <body>
+
+	
+	<ul class="list-group" id="dove_ui">
+	  <li class="list-group-item" >DOVE DEV.&nbsp;<input class="btn btn-success" type="button" value="刷新" id="refreshbtn"/></li>
+
+	  <!--
+	  <li class="list-group-item list-group-item-primary">A simple primary list group item</li>
+	  <li class="list-group-item list-group-item-secondary">A simple secondary list group item</li>
+	  <li class="list-group-item list-group-item-success">A simple success list group item</li>
+	  <li class="list-group-item list-group-item-danger">A simple danger list group item</li>
+	  <li class="list-group-item list-group-item-warning">A simple warning list group item</li>
+	  <li class="list-group-item list-group-item-info">A simple info list group item</li>
+	  <li class="list-group-item list-group-item-light">A simple light list group item</li>
+	  <li class="list-group-item list-group-item-dark">A simple dark list group item</li>
+	 
+	 -->
+	</ul>
+	
+	<ul class="list-group" id="react_ui">
+	  <li class="list-group-item" >REACT DEV DOVE. &nbsp;<input class="btn btn-success" type="button" value="刷新" id="refreshbtn_react"/></li>
+	</ul>
+
+    <script src="https://code.jquery.com/jquery-3.4.0.min.js" ></script>
+	<script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	<script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+	<script type="text/javascript">
+		
+		$(function(){
+			var hosts = JSON.parse("{\"dove\":[\"localhost\",\"192.168.1.100\",\"192.168.1.100\",\"192.168.1.100\"],\"react\":[\"192.168.1.100\",\"192.168.1.100\",\"192.168.1.100\",\"192.168.1.100\"],\"snapservice\":[\"192.168.1.100\",\"192.168.1.100\",\"192.168.1.100\",\"192.168.1.100\"],\"sds\":[\"192.168.1.100\",\"192.168.1.100\",\"192.168.1.100\",\"192.168.1.100\"]}")
+			//console.log(hosts.dove);
+			/*
+			$.ajaxSetup({
+				error:function(x,e){
+					console.log(x);
+					console.log(e);
+					return false;
+				}
+			})
+			*/
+			$("#refreshbtn").click(function(){
+				dosth($("#dove_ui"),hosts.dove);
+			}); 
+
+			$("#refreshbtn_react").click(function(){
+				dosth($("#react_ui"),hosts.react);
+			});  			
+			
+			function dosth(ulObject,arr){
+			   ulObject.children(".list-group-item-success").remove();
+			   ulObject.children(".list-group-item-danger").remove();
+			   $.each(arr, function(i,val){      
+				  $.ajax
+					({  type: "get",
+						contentType: "application/json; charset=utf-8",
+						dataType: "json",
+						url: "http://"+val+":8080/demo/health",  
+						success: function (data) {              
+							console.log(val+":"+data.version+":"+data.info);
+							ulObject.append("<li class=\"list-group-item list-group-item-success\">"+val+":"+data.version+":"+data.info+"</li>");
+						},
+						timeout: 1000,
+						error: function (XMLHttpRequest, textStatus, errorThrown) {           
+							console.log(val+":"+XMLHttpRequest+textStatus+errorThrown.message);
+							ulObject.append("<li class=\"list-group-item list-group-item-danger\">"+val+":"+XMLHttpRequest+textStatus+errorThrown.message+"</li>");
+						}
+					});
+							
+				})
+			}
+			 
+		});
+	
+	</script>
+  </body>
+  
+</html>
